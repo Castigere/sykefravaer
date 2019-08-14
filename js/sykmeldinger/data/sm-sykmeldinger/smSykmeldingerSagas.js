@@ -15,11 +15,26 @@ import {
     bekreftSmSykmeldingKvitteringVistLengeNok,
 } from './smSykmeldingerActions';
 import { skalBekrefteSmSykmeldingSelector, skalHenteSmSykmeldingerSelector } from './smSykmeldingerSelectors';
-import {
-    API_NAVN, get, hentSyfoApiUrl, post,
-} from '../../../data/gateway-api';
+import { get, post } from '../../../data/gateway-api';
 import { toggleNyttSykmeldingsmottak, unleashtogglesHentetSelector } from '../../../data/unleash-toggles/unleashTogglesSelectors';
 import { HENTET_UNLEASH_TOGGLES } from '../../../data/unleash-toggles/unleashToggles_actions';
+
+export const hentSykmeldingsregisterUrl = () => {
+    const url = window
+    && window.location
+    && window.location.href
+        ? window.location.href
+        : '';
+    if (url.indexOf('tjenester.nav') > -1) {
+        // Prod
+        return 'https://syfosmregisterproxy.nav.no';
+    } if (url.indexOf('localhost') > -1 || url.indexOf('herokuapp') > -1) {
+        // Lokalt
+        return '/syfosmregister';
+    }
+    // Preprod
+    return 'https://syfosmregisterproxy-q.nav.no';
+};
 
 export function* oppdaterSmSykmeldinger() {
     const toggle = yield select(toggleNyttSykmeldingsmottak);
@@ -27,7 +42,7 @@ export function* oppdaterSmSykmeldinger() {
     if (toggle && toggleHentet) {
         yield put(henterSmSykmeldinger());
         try {
-            const data = yield call(get, `${hentSyfoApiUrl(API_NAVN.SYFOSMREGISTER)}/v1/sykmeldinger`);
+            const data = yield call(get, `${hentSykmeldingsregisterUrl()}/v1/sykmeldinger`);
             yield put(smSykmeldingerHentet(data));
         } catch (e) {
             log(e);
@@ -51,7 +66,7 @@ export function* bekreftSmSykmeldingLestSaga(action) {
     if (toggle && skalBekrefte) {
         yield put(bekrefterLestSmSykmelding());
         try {
-            yield call(post, `${hentSyfoApiUrl(API_NAVN.SYFOSMREGISTER)}/v1/sykmeldinger/${action.smSykmelding.id}/bekreft`);
+            yield call(post, `${hentSykmeldingsregisterUrl()}/v1/sykmeldinger/${action.smSykmelding.id}/bekreft`);
             yield put(smSykmeldingBekreftetLest(action.smSykmelding));
             browserHistory.push('/sykefravaer');
             yield delay(10000);

@@ -2,7 +2,7 @@ const mockData = require('./mockData');
 const enums = require('./mockDataEnums');
 
 function mockHentSykmeldinger(server) {
-    server.get('/syfosmregister/api/v1/sykmeldinger', (req, res) => {
+    server.get('/syfosmregister/v1/sykmeldinger', (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(mockData[enums.SM_SYKMELDINGER]));
     });
@@ -11,7 +11,7 @@ function mockHentSykmeldinger(server) {
 function mockSmSykmeldingerLokalt(server) {
     mockHentSykmeldinger(server);
 
-    server.post('/syfosmregister/api/v1/sykmeldinger/:id/bekreft', (req, res) => {
+    server.post('/syfosmregister/v1/sykmeldinger/:id/bekreft', (req, res) => {
         res.status(200);
         setTimeout(() => {
             res.send('');
