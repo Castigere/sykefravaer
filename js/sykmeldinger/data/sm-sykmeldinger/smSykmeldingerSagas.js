@@ -27,7 +27,7 @@ export function* oppdaterSmSykmeldinger() {
     if (toggle && toggleHentet) {
         yield put(henterSmSykmeldinger());
         try {
-            const data = yield call(get, `${hentSyfoApiUrl(API_NAVN.SYFOSMREGISTER)}/v1/sykmeldinger`);
+            const data = yield call(get, '/syfosmregister/api/v1/sykmeldinger');
             yield put(smSykmeldingerHentet(data));
         } catch (e) {
             log(e);
@@ -51,7 +51,7 @@ export function* bekreftSmSykmeldingLestSaga(action) {
     if (toggle && skalBekrefte) {
         yield put(bekrefterLestSmSykmelding());
         try {
-            yield call(post, `${hentSyfoApiUrl(API_NAVN.SYFOSMREGISTER)}/v1/sykmeldinger/${action.smSykmelding.id}/bekreft`);
+            yield call(post, `/syfosmregister/api/v1/sykmeldinger/${action.smSykmelding.id}/bekreft`);
             yield put(smSykmeldingBekreftetLest(action.smSykmelding));
             browserHistory.push('/sykefravaer');
             yield delay(10000);

@@ -4,8 +4,9 @@ const express = require('express');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
 const Promise = require('promise');
-const getDecorator = require('./decorator');
 const prometheus = require('prom-client');
+const getDecorator = require('./decorator');
+const startSyfosmregisterProxy = require('./gateway-proxy/syfosmregister-proxy');
 
 // Prometheus metrics
 const collectDefaultMetrics = prometheus.collectDefaultMetrics;
@@ -90,9 +91,12 @@ const startServer = (html) => {
 
     if (env === 'opplaering' || env === 'local') {
         require('./mock/mockEndepunkter')(server, env === 'local');
+    } else {
+        startSyfosmregisterProxy(server);
     }
 
     const port = process.env.PORT || 8080;
+
     server.listen(port, () => {
         console.log(`App listening on port: ${port}`);
     });
