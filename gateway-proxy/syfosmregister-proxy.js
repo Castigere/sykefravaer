@@ -2,8 +2,11 @@
 const proxy = require('express-http-proxy');
 const URL = require('url');
 
-const getPath = req => URL.parse(req.url).path;
+const secretsPath = `${process.env.VKS_SECRET_DEST_PATH}/credentials.json`;
+console.log(`Henter secrets fra ${secretsPath}`);
+const secrets = require(secretsPath);
 
+const getPath = req => URL.parse(req.url).path;
 
 const proxyReqPathResolver = (req) => {
     const path = `/syfosmregister/api${getPath(req)}`;
@@ -13,12 +16,12 @@ const proxyReqPathResolver = (req) => {
 
 const proxyReqOptDecorator = (proxyReqOpts) => {
     // eslint-disable-next-line no-param-reassign
-    proxyReqOpts.headers['x-nav-apiKey'] = process.env.SYKEFRAVAER_SYFOSMREGISTERAPI_APIKEY_PASSWORD;
+    proxyReqOpts.headers['x-nav-apiKey'] = secrets.SYKEFRAVAER_SYFOSMREGISTERAPI_APIKEY_PASSWORD;
     return proxyReqOpts;
 };
 
 const createSyfosmregisterProxy = () => {
-    const url = process.env.SYFOSMREGISTERAPI_URL;
+    const url = secrets.SYFOSMREGISTERAPI_URL;
     console.log(`Proxyer til url: ${url}`);
     return proxy(url, { proxyReqPathResolver, proxyReqOptDecorator });
 };
