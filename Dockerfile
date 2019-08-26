@@ -7,4 +7,4 @@ RUN npm install express path mustache-express promise prom-client dotenv jsdom r
 
 EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start-debug"]

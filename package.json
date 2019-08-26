@@ -19,6 +19,7 @@
     "filmer": "cp -R filmer ./dist/resources/",
     "nais-build": "npm-run-all clean deploy images filmtekster filmer",
     "start": "node ./server.js",
+    "start-debug": "DEBUG=express-http-proxy npm start  | grep 'express-http-proxy' ",
     "start-opplaering": "node ./server.js opplaering",
     "start-local": "node ./server.js local",
     "scripts:watch": "webpack-dev-server --inline --port 9090",
